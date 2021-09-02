@@ -10,7 +10,7 @@ class FakeCurrencyRepository : CurrencyRepository {
         return if (returnError) {
             Resource.error("Error", null)
         } else {
-            Resource.success(Rates("true",
+            Resource.success(Rates(true,
                 "https://currencylayer.com/terms",
                 "https://currencylayer.com/privacy",
                 1630579384,

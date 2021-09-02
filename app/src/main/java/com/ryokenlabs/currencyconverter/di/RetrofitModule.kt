@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
     const val apiKey = "e33391174e5f75a4d858f559ab08179b"
-    const val baseUrl = "http://api.currencylayer.com"
+    private const val baseUrl = "http://api.currencylayer.com"
     @Singleton
     @Provides
     fun provideGsonBuilder() : Gson {

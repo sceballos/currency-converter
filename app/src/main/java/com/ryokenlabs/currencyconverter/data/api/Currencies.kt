@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Rates(
+data class Currencies(
     @SerializedName("success")
     @Expose
     var success : Boolean,
@@ -19,15 +19,7 @@ data class Rates(
     @Expose
     var privacy : String,
 
-    @SerializedName("timestamp")
+    @SerializedName("currencies")
     @Expose
-    var timestamp : Long,
-
-    @SerializedName("source")
-    @Expose
-    var source : String,
-
-    @SerializedName("quotes")
-    @Expose
-    var quotes : Map<String,Double>
+    var currencies : Map<String,String>
     ) : Parcelable
