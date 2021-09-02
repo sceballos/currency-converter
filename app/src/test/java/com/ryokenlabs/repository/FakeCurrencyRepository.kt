@@ -6,7 +6,7 @@ import com.ryokenlabs.util.Resource
 
 class FakeCurrencyRepository : CurrencyRepository {
     override suspend fun getCurrenciesRate(currenciesQuery: String): Resource<Rates> {
-        val returnError = false
+        val returnError = true
         return if (returnError) {
             Resource.error("Error", null)
         } else {

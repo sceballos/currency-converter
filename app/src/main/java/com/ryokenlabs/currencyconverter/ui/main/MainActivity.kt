@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.ryokenlabs.currencyconverter.R
 import com.ryokenlabs.currencyconverter.databinding.ActivityMainBinding
 import com.ryokenlabs.currencyconverter.ui.main.viewmodel.CurrencyConversionViewModel
