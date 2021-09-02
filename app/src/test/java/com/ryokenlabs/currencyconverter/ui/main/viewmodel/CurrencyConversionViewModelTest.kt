@@ -10,6 +10,7 @@ import com.ryokenlabs.repository.FakeCurrencyRepository
 import com.ryokenlabs.util.Status
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -50,6 +51,15 @@ class CurrencyConversionViewModelTest {
         assertThat(value.getContentIfNotHandled()?.data).isNotNull()
     }
 
+    @Ignore("Run this test case by changing variable `returnError` to true inside getCurrencyList() function inside FakeCurrencyRepository class")
+    @Test
+    fun `test fake getCurrencies() request, returns null`() {
+        viewModel.getCurrencies()
+        val value = viewModel.currencies.getOrAwaitValueTest()
+        assertThat(value.getContentIfNotHandled()?.data).isNull()
+    }
+
+
     @Test
     fun `test fake getRates() request, returns success`() {
         viewModel.getRates("")
@@ -69,5 +79,13 @@ class CurrencyConversionViewModelTest {
         viewModel.getRates("")
         val value = viewModel.rates.getOrAwaitValueTest()
         assertThat(value.getContentIfNotHandled()?.data).isNotNull()
+    }
+
+    @Ignore("Run this test case by changing variable `returnError` to true inside getCurrenciesRate() function inside FakeCurrencyRepository class")
+    @Test
+    fun `test fake getRates() request, returns null`() {
+        viewModel.getRates("")
+        val value = viewModel.rates.getOrAwaitValueTest()
+        assertThat(value.getContentIfNotHandled()?.data).isNull()
     }
 }
