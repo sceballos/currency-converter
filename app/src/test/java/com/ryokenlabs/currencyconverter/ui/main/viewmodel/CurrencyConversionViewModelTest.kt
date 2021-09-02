@@ -88,4 +88,9 @@ class CurrencyConversionViewModelTest {
         val value = viewModel.rates.getOrAwaitValueTest()
         assertThat(value.getContentIfNotHandled()?.data).isNull()
     }
+
+    @Test
+    fun `test conversion from one currency to another`() {
+
+    }
 }

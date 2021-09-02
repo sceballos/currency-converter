@@ -23,7 +23,6 @@ class CurrencyConversionViewModel @Inject constructor(
     private val _rates = MutableLiveData<Event<Resource<Rates>>>()
     val rates : LiveData<Event<Resource<Rates>>> = _rates
 
-
     fun getCurrencies() {
         _currencies.value = Event(Resource.loading(null))
         viewModelScope.launch {
@@ -38,6 +37,10 @@ class CurrencyConversionViewModel @Inject constructor(
             val response = currencyRepository.getCurrenciesRate(query)
             _rates.value = Event(response)
         }
+    }
+
+    fun convertCurrency(from : Double, to : Double) {
+
     }
 
 
