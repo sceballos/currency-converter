@@ -15,6 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
     const val apiKey = "e33391174e5f75a4d858f559ab08179b"
+    const val baseUrl = "http://api.currencylayer.com"
     @Singleton
     @Provides
     fun provideGsonBuilder() : Gson {
@@ -28,7 +29,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(gson : Gson) : Retrofit.Builder {
         return Retrofit.Builder().
-        baseUrl("http://api.currencylayer.com").
+        baseUrl(baseUrl).
         addConverterFactory(GsonConverterFactory.create(gson))
     }
 
