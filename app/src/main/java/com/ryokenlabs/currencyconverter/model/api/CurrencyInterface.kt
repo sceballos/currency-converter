@@ -7,6 +7,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface CurrencyInterface {
-    @GET("/live?access_key=${RetrofitModule.apiKey}&currencies=AUD,EUR,GBP,PLN")
+    @GET("/live?access_key=${RetrofitModule.apiKey}")
     suspend fun requestRates(@Query("query")  query: String?) : Response<Rates>
 }

@@ -3,6 +3,7 @@ package com.ryokenlabs.currencyconverter.ui.main.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import com.ryokenlabs.currencyconverter.MainCoroutineRule
+import com.ryokenlabs.currencyconverter.data.api.Rates
 import com.ryokenlabs.currencyconverter.getOrAwaitValueTest
 import com.ryokenlabs.repository.FakeCurrencyRepository
 import com.ryokenlabs.util.Status
@@ -28,11 +29,28 @@ class CurrencyConversionViewModelTest {
     }
 
     @Test
-    fun `test fake rates call, returns error`() {
+    fun `test fake getRates() request, returns rates success`() {
         viewModel.getRates("")
 
         val value = viewModel.rates.getOrAwaitValueTest()
 
-        assertThat(value.getContentIfNotHandled()?.status).isEqualTo(Status.ERROR)
+        assertThat(value.getContentIfNotHandled()?.status).isEqualTo(Status.SUCCESS)
+    }
+
+    @Test
+    fun `test fake getRates() request, returns a Rates object`() {
+        viewModel.getRates("")
+
+        val value = viewModel.rates.getOrAwaitValueTest()
+        assertThat(value.getContentIfNotHandled()?.data).isInstanceOf(Rates::class.java)
+    }
+
+    @Test
+    fun `test fake getRates() request, returns not null`() {
+        viewModel.getRates("")
+
+        val value = viewModel.rates.getOrAwaitValueTest()
+
+        assertThat(value.getContentIfNotHandled()?.data).isNotNull()
     }
 }
