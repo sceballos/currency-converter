@@ -91,6 +91,37 @@ class CurrencyConversionViewModelTest {
 
     @Test
     fun `test conversion from one currency to another`() {
+        val amount = 1.0
+        val from = 97.716706
+        val to = 109.997044
+        val result = viewModel.convertCurrency(amount, from, to)
+        assertThat(result).isEqualTo((to/from) * amount)
+    }
 
+    @Test
+    fun `test attempt to convert negative amount`() {
+        val amount = -1.0
+        val from = 97.716706
+        val to = 109.997044
+        val result = viewModel.convertCurrency(amount, from, to)
+        assertThat(result).isEqualTo(-1.0)
+    }
+
+    @Test
+    fun `test attempt to convert negative from value`() {
+        val amount = 1.0
+        val from = -97.716706
+        val to = 109.997044
+        val result = viewModel.convertCurrency(amount, from, to)
+        assertThat(result).isEqualTo(-1.0)
+    }
+
+    @Test
+    fun `test attempt to convert negative to value`() {
+        val amount = 1.0
+        val from = 97.716706
+        val to = -109.997044
+        val result = viewModel.convertCurrency(amount, from, to)
+        assertThat(result).isEqualTo(-1.0)
     }
 }

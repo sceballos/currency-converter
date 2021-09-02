@@ -39,9 +39,14 @@ class CurrencyConversionViewModel @Inject constructor(
         }
     }
 
-    fun convertCurrency(from : Double, to : Double) {
-
+    fun convertCurrency(amount : Double, from : Double, to : Double) : Double {
+        if (isNegative(amount) || isNegative(from) || isNegative(to)) {
+            return -1.0
+        }
+        return (to/from) * amount
     }
 
-
+    private fun isNegative(value : Double) : Boolean {
+        return value < 0
+    }
 }
