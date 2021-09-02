@@ -21,7 +21,7 @@ data class Rates(
 
     @SerializedName("timestamp")
     @Expose
-    var timestamp : String,
+    var timestamp : Long,
 
     @SerializedName("source")
     @Expose
@@ -29,5 +29,5 @@ data class Rates(
 
     @SerializedName("quotes")
     @Expose
-    var quotes : Map<String,String>
+    var quotes : Map<String,Double>
     ) : Parcelable
