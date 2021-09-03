@@ -3,7 +3,6 @@ package com.ryokenlabs.currencyconverter.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
 @Entity(tableName = "rates_items")
 data class RatesItem(
     var success : Boolean,
@@ -11,7 +10,7 @@ data class RatesItem(
     var privacy : String,
     var timestamp : Long,
     var source : String,
-    var quotes : Map<String,Double>,
+    var quotes : Map<String,Double>?,
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null
 )
