@@ -15,7 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class CurrencyConversionViewModelTest {
-
+    private val conversionTolerance = 0.9999999
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -90,12 +90,58 @@ class CurrencyConversionViewModelTest {
     }
 
     @Test
-    fun `test conversion from one currency to another`() {
+    fun `test ARS to JYN conversion`() {
         val amount = 1.0
-        val from = 97.716706
-        val to = 109.997044
-        val result = viewModel.convertCurrency(amount, from, to)
-        assertThat(result).isEqualTo((to/from) * amount)
+        val ars = 97.716706
+        val yen = 109.997044
+        val result = viewModel.convertCurrency(amount, ars, yen)
+        assertThat(result).isWithin(conversionTolerance).of(1.12)
+    }
+
+    @Test
+    fun `test big floating point ARS amount to JYN conversion`() {
+        val amount = 49123784.52
+        val ars = 97.716706
+        val yen = 109.997044
+        val result = viewModel.convertCurrency(amount, ars, yen)
+        assertThat(result).isWithin(conversionTolerance).of(55297311.06)
+    }
+
+    @Test
+    fun `test EUR to JYN conversion`() {
+        val amount = 1.0
+        val eur = 0.843675
+        val yen = 109.997044
+        val result = viewModel.convertCurrency(amount, eur, yen)
+        assertThat(result).isWithin(conversionTolerance).of(130.68)
+    }
+
+    @Test
+    fun `test bigger amount floating point USD amount to JYN conversion`() {
+        val amount = 50.45
+        val usd = 1.0
+        val yen = 109.997044
+        val result = viewModel.convertCurrency(amount, usd, yen)
+        assertThat(result).isWithin(conversionTolerance).of(5549.3508698)
+    }
+
+    @Test
+    fun `test EUR to USD conversion`() {
+        val amount = 1.0
+        val eur = 0.843675
+        val usd = 1.0
+        val result = viewModel.convertCurrency(amount, eur, usd)
+        assertThat(result).isWithin(conversionTolerance).of(1.19)
+    }
+
+
+    @Test
+    fun `test BBD to BTN conversion`() {
+        val amount = 1.0
+        val bbd = 2.014986
+        val btn = 72.915634
+        val result = viewModel.convertCurrency(amount, bbd, btn)
+        assertThat(result).isWithin(conversionTolerance).of(36.17)
     }
 
     @Test
