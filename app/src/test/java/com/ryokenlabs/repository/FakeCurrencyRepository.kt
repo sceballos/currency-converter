@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
 import com.ryokenlabs.currencyconverter.repository.CurrencyRepository
 import com.ryokenlabs.util.Resource
 
@@ -53,7 +54,7 @@ class FakeCurrencyRepository : CurrencyRepository {
 
     override suspend fun insertCacheCurrencyRates(networkRates: Resource<Rates>) {
         networkRates.data?.let {
-            val newValue = RatesItem(it.success, it.terms, it.privacy, it.timestamp, it.source, it.quotes, id = 777)
+            val newValue = RatesItem(it.success, it.terms, it.privacy, it.timestamp, it.source, it.quotes, id = SINGLE_RATES_ID)
             rates = newValue
             refreshLiveData()
         }
