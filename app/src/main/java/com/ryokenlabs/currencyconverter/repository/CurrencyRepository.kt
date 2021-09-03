@@ -11,6 +11,6 @@ interface CurrencyRepository {
     suspend fun getCurrenciesRates(currenciesQuery : String) : Resource<Rates>
     suspend fun insertCacheCurrencyRates(networkRates : Resource<Rates>)
     suspend fun deleteCacheCurrencyRates(ratesItem: RatesItem)
-    suspend fun getCacheCurrenciesRates() : LiveData<RatesItem>
+    fun getCacheCurrenciesRates() : LiveData<RatesItem>
     suspend fun setCurrencies(newCurrencies: Resource<Currencies>)
 }

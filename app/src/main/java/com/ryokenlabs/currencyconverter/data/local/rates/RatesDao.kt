@@ -13,5 +13,5 @@ interface RatesDao {
     suspend fun deleteRatesItem(ratesItem: RatesItem)
 
     @Query("SELECT * FROM rates_items where id = :id")
-    fun observeAllRatesItems(id: Int = SINGLE_RATES_ID) : LiveData<RatesItem>
+    fun observeRatesItem(id: Int = SINGLE_RATES_ID) : LiveData<RatesItem>
 }

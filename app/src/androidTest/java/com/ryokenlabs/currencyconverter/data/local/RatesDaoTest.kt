@@ -46,7 +46,7 @@ class RatesDaoTest {
         val ratesItem = RatesItem(true, "", "", 0, "", mapOf<String, Double>("USD" to 1.0), id = SINGLE_RATES_ID)
         dao.insertRatesItem(ratesItem)
 
-        val allRatesItems = dao.observeAllRatesItems().getOrAwaitValue()
+        val allRatesItems = dao.observeRatesItem().getOrAwaitValue()
 
         assertThat(allRatesItems).isEqualTo(ratesItem)
     }
@@ -57,13 +57,13 @@ class RatesDaoTest {
         dao.insertRatesItem(ratesItem)
         dao.deleteRatesItem(ratesItem)
 
-        val allRatesItems = dao.observeAllRatesItems().getOrAwaitValue()
+        val allRatesItems = dao.observeRatesItem().getOrAwaitValue()
 
         assertThat(allRatesItems).isNull()
     }
 
     @Test
-    fun replaceExistingItem() = runBlockingTest() {
+    fun replaceExistingItem() = runBlockingTest {
         val ratesItem1 = RatesItem(true, "", "", 0, "", mapOf<String, Double>("USD" to 1.0), id = SINGLE_RATES_ID)
         val ratesItem2 = RatesItem(true, "", "", 0, "", mapOf<String, Double>("USD" to 1.0), id = SINGLE_RATES_ID)
         val ratesItem3 = RatesItem(true, "", "", 0, "", mapOf<String, Double>("USD" to 1.0), id = SINGLE_RATES_ID)
@@ -72,13 +72,13 @@ class RatesDaoTest {
         dao.insertRatesItem(ratesItem2)
         dao.insertRatesItem(ratesItem3)
 
-        val allRatesItems = dao.observeAllRatesItems().getOrAwaitValue()
+        val allRatesItems = dao.observeRatesItem().getOrAwaitValue()
 
         assertThat(allRatesItems).isEqualTo(ratesItem3)
     }
 
     @Test
-    fun addSeveralRates() = runBlockingTest() {
+    fun addSeveralRates() = runBlockingTest {
         val ratesItem1 = RatesItem(true, "", "", 0, "", mapOf<String, Double>("USD" to 1.0), id = SINGLE_RATES_ID)
         val ratesItem2 = RatesItem(true, "", "", 1, "", mapOf<String, Double>("USD" to 1.0), id = SINGLE_RATES_ID)
         val ratesItem3 = RatesItem(true, "", "", 2, "", mapOf<String, Double>("USD" to 1.0), id = SINGLE_RATES_ID)
@@ -90,7 +90,7 @@ class RatesDaoTest {
 
         dao.insertRatesItem(ratesItem3)
 
-        val allRatesItems = dao.observeAllRatesItems().getOrAwaitValue()
+        val allRatesItems = dao.observeRatesItem().getOrAwaitValue()
 
         assertThat(allRatesItems).isEqualTo(ratesItem3)
     }

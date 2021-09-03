@@ -1,5 +1,6 @@
 package com.ryokenlabs.currencyconverter.data.local.rates
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters

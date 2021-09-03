@@ -1,10 +1,12 @@
 package com.ryokenlabs.currencyconverter.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesDao
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
 import com.ryokenlabs.currencyconverter.model.api.CurrencyInterface
 import com.ryokenlabs.util.Resource
 import javax.inject.Inject
@@ -49,17 +51,18 @@ class DefaultCurrencyRepository @Inject constructor(
 
     override suspend fun insertCacheCurrencyRates(networkRates: Resource<Rates>) {
         if (networkRates.data != null) {
+            Log.e("TAG", "insertCacheCurrencyRates: ${networkRates.data.quotes}", )
+
             networkRates.data.apply {
+                Log.e("TAG", "insertCacheCurrencyRates: ${this}", )
+
                 ratesDao.insertRatesItem(
-                    RatesItem(
-                    this.success,
-                    this.terms,
-                    this.privacy,
-                    this.timestamp,
-                    this.source,
-                    this.quotes)
+                    RatesItem(this.success, this.terms, this.privacy, this.timestamp, this.source,
+                    this.quotes, id = SINGLE_RATES_ID)
                 )
             }
+
+
         }
     }
 
@@ -67,12 +70,12 @@ class DefaultCurrencyRepository @Inject constructor(
         ratesDao.deleteRatesItem(ratesItem)
     }
 
-    override suspend fun getCacheCurrenciesRates(): LiveData<RatesItem> {
-        return ratesDao.observeAllRatesItems()
+    override fun getCacheCurrenciesRates(): LiveData<RatesItem> {
+        return ratesDao.observeRatesItem(id = SINGLE_RATES_ID)
     }
 
     override suspend fun setCurrencies(newCurrencies: Resource<Currencies>) {
-        TODO("Not yet implemented")
+
     }
 
 
