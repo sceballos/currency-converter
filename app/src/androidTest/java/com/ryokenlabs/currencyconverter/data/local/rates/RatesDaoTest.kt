@@ -1,4 +1,4 @@
-package com.ryokenlabs.currencyconverter.data.local
+package com.ryokenlabs.currencyconverter.data.local.rates
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
@@ -7,9 +7,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
-import com.ryokenlabs.currencyconverter.data.local.rates.RatesDao
-import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
-import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDatabase
 import com.ryokenlabs.currencyconverter.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
