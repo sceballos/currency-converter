@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.upToDateRates.observe(this, {
 
-            Log.e("TAG", "upToDateRates.observe: ${it}", )
+            Log.e("TAG", "update recycler view", )
 
         })
 
@@ -61,8 +61,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel.getRates("")
-
-        //viewModel.getCurrencies()
 
     }
 }
