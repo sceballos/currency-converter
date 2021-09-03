@@ -5,8 +5,10 @@ import com.google.common.truth.Truth.assertThat
 import com.ryokenlabs.currencyconverter.MainCoroutineRule
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.getOrAwaitValueTest
 import com.ryokenlabs.repository.FakeCurrencyRepository
+import com.ryokenlabs.util.Resource
 import com.ryokenlabs.util.Status
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
@@ -24,13 +26,22 @@ class CurrencyConversionViewModelTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var viewModel: CurrencyConversionViewModel
-
+    private var newRates: Resource<Rates>? = null
     @Before
     fun setup() {
         viewModel = CurrencyConversionViewModel(FakeCurrencyRepository())
+
+        viewModel.getRates("")
+        newRates = viewModel.rates.getOrAwaitValueTest().getContentIfNotHandled()
     }
 
-    @Test
+    /************************************************************
+     *
+     * FAKE API CALLS TEST CASES
+     *
+     *************************************************************/
+
+    @Test()
     fun `test fake getCurrencies() request, returns success`() {
         viewModel.getCurrencies()
         val value = viewModel.currencies.getOrAwaitValueTest()
@@ -51,7 +62,7 @@ class CurrencyConversionViewModelTest {
         assertThat(value.getContentIfNotHandled()?.data).isNotNull()
     }
 
-    @Ignore("Run this test case by changing variable `returnError` to true inside getCurrencyList() function inside FakeCurrencyRepository class")
+    @Ignore("Run this test case by using setShouldReturnError(true) function inside FakeCurrencyRepository class")
     @Test
     fun `test fake getCurrencies() request, returns null`() {
         viewModel.getCurrencies()
@@ -59,12 +70,11 @@ class CurrencyConversionViewModelTest {
         assertThat(value.getContentIfNotHandled()?.data).isNull()
     }
 
-
     @Test
-    fun `test fake getRates() request, returns success`() {
-        viewModel.getRates("")
-        val value = viewModel.rates.getOrAwaitValueTest()
-        assertThat(value.getContentIfNotHandled()?.status).isEqualTo(Status.SUCCESS)
+    fun `test fake updateCachedRates() request, returns a cached element after network response`() {
+        viewModel.updateCachedRates(newRates!!)
+        val value = viewModel.upToDateRates.getOrAwaitValueTest()
+        assertThat(value).isInstanceOf(RatesItem::class.java)
     }
 
     @Test
@@ -81,13 +91,20 @@ class CurrencyConversionViewModelTest {
         assertThat(value.getContentIfNotHandled()?.data).isNotNull()
     }
 
-    @Ignore("Run this test case by changing variable `returnError` to true inside getCurrenciesRate() function inside FakeCurrencyRepository class")
+    @Ignore("Run this test case by using setShouldReturnError(true) function inside FakeCurrencyRepository class")
     @Test
     fun `test fake getRates() request, returns null`() {
         viewModel.getRates("")
         val value = viewModel.rates.getOrAwaitValueTest()
         assertThat(value.getContentIfNotHandled()?.data).isNull()
     }
+
+
+    /************************************************************
+     *
+     * CONVERSION TEST CASES
+     *
+     *************************************************************/
 
     @Test
     fun `test ARS to JYN conversion`() {

@@ -1,5 +1,6 @@
 package com.ryokenlabs.currencyconverter.di
 
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesDao
 import com.ryokenlabs.currencyconverter.model.api.CurrencyInterface
 import com.ryokenlabs.currencyconverter.repository.CurrencyRepository
 import com.ryokenlabs.currencyconverter.repository.DefaultCurrencyRepository
@@ -16,6 +17,7 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideDefaultCurrencyRepository(
+        dao : RatesDao,
         contentRetrofit : CurrencyInterface
-    ) = DefaultCurrencyRepository(contentRetrofit) as CurrencyRepository
+    ) = DefaultCurrencyRepository(dao, contentRetrofit) as CurrencyRepository
 }
