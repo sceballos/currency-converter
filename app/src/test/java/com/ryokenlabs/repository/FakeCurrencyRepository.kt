@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
+import com.ryokenlabs.currencyconverter.data.local.currencies.CurrenciesItem
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
 import com.ryokenlabs.currencyconverter.repository.CurrencyRepository
@@ -11,12 +12,12 @@ import com.ryokenlabs.util.Resource
 
 class FakeCurrencyRepository : CurrencyRepository {
 
-    private var currencies : Currencies? = null
+    private var currencies : CurrenciesItem? = null
     private var rates : RatesItem? = null
 
     private var returnError = false
 
-    private val observableCurrencies = MutableLiveData(currencies)
+    private val observableCurrencies = MutableLiveData<CurrenciesItem>(currencies)
     private val observableCurrentRates = MutableLiveData<RatesItem>(rates)
 
     private fun setShouldReturnError(value : Boolean) {
@@ -37,6 +38,22 @@ class FakeCurrencyRepository : CurrencyRepository {
                 "https://currencylayer.com/privacy",
                 mapOf<String, String>("AUS" to "Australian Dollar")))
         }
+    }
+
+    override suspend fun insertCacheCurrencies(newCurrencies: Resource<Currencies>) {
+        newCurrencies.data?.let {
+            val newValue = CurrenciesItem(it.success, it.terms, it.privacy, it.currencies, id = SINGLE_RATES_ID)
+            currencies = newValue
+            refreshLiveData()
+        }
+    }
+
+    override suspend fun deleteCacheCurrencies(currenciesItem: CurrenciesItem) {
+        currencies = null
+    }
+
+    override fun getCacheCurrencies(): LiveData<CurrenciesItem> {
+        return observableCurrencies
     }
 
     override suspend fun getCurrenciesRates(currenciesQuery: String): Resource<Rates> {
@@ -66,12 +83,5 @@ class FakeCurrencyRepository : CurrencyRepository {
 
     override fun getCacheCurrenciesRates(): LiveData<RatesItem> {
         return observableCurrentRates
-    }
-
-    override suspend fun setCurrencies(newCurrencies: Resource<Currencies>) {
-        if (newCurrencies.data != null) {
-            currencies = newCurrencies.data
-            refreshLiveData()
-        }
     }
 }
