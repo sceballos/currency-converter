@@ -1,11 +1,10 @@
 package com.ryokenlabs.currencyconverter.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
-import com.ryokenlabs.currencyconverter.data.local.RatesDao
-import com.ryokenlabs.currencyconverter.data.local.RatesItem
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesDao
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.model.api.CurrencyInterface
 import com.ryokenlabs.util.Resource
 import javax.inject.Inject
@@ -51,13 +50,15 @@ class DefaultCurrencyRepository @Inject constructor(
     override suspend fun insertCacheCurrencyRates(networkRates: Resource<Rates>) {
         if (networkRates.data != null) {
             networkRates.data.apply {
-                ratesDao.insertRatesItem(RatesItem(
+                ratesDao.insertRatesItem(
+                    RatesItem(
                     this.success,
                     this.terms,
                     this.privacy,
                     this.timestamp,
                     this.source,
-                    this.quotes))
+                    this.quotes)
+                )
             }
         }
     }

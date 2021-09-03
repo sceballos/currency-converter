@@ -2,7 +2,7 @@ package com.ryokenlabs.currencyconverter.di
 
 import android.content.Context
 import androidx.room.Room
-import com.ryokenlabs.currencyconverter.data.local.RatesItemsDatabase
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

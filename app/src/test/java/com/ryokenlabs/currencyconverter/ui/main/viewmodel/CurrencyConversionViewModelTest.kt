@@ -5,7 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.ryokenlabs.currencyconverter.MainCoroutineRule
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
-import com.ryokenlabs.currencyconverter.data.local.RatesItem
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.getOrAwaitValueTest
 import com.ryokenlabs.repository.FakeCurrencyRepository
 import com.ryokenlabs.util.Resource

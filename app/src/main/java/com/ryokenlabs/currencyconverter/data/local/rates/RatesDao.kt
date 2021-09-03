@@ -1,8 +1,8 @@
-package com.ryokenlabs.currencyconverter.data.local
+package com.ryokenlabs.currencyconverter.data.local.rates
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.ryokenlabs.currencyconverter.data.local.RatesItemsDBConstants.SINGLE_RATES_ID
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
 
 @Dao
 interface RatesDao {

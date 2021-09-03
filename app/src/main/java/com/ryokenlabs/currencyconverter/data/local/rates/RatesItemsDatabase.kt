@@ -1,4 +1,4 @@
-package com.ryokenlabs.currencyconverter.data.local
+package com.ryokenlabs.currencyconverter.data.local.rates
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

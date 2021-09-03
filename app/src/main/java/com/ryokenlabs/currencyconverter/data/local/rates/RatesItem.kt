@@ -1,4 +1,4 @@
-package com.ryokenlabs.currencyconverter.data.local
+package com.ryokenlabs.currencyconverter.data.local.rates
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

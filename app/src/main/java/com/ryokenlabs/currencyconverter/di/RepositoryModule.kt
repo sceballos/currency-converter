@@ -1,6 +1,6 @@
 package com.ryokenlabs.currencyconverter.di
 
-import com.ryokenlabs.currencyconverter.data.local.RatesDao
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesDao
 import com.ryokenlabs.currencyconverter.model.api.CurrencyInterface
 import com.ryokenlabs.currencyconverter.repository.CurrencyRepository
 import com.ryokenlabs.currencyconverter.repository.DefaultCurrencyRepository
