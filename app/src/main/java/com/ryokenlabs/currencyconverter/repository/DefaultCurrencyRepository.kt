@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
+import com.ryokenlabs.currencyconverter.data.local.currencies.CurrenciesDao
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesDao
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
@@ -12,6 +13,7 @@ import com.ryokenlabs.util.Resource
 import javax.inject.Inject
 
 class DefaultCurrencyRepository @Inject constructor(
+    private val currenciesDao: CurrenciesDao,
     private val ratesDao : RatesDao,
     private val currencyAPI: CurrencyInterface
 ) : CurrencyRepository{

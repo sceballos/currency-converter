@@ -63,7 +63,7 @@ class FakeCurrencyRepository : CurrencyRepository {
         rates = null
     }
 
-    override suspend fun getCacheCurrenciesRates(): LiveData<RatesItem> {
+    override fun getCacheCurrenciesRates(): LiveData<RatesItem> {
         return observableCurrentRates
     }
 
