@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.ryokenlabs.currencyconverter.MainCoroutineRule
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
+import com.ryokenlabs.currencyconverter.data.local.currencies.CurrenciesItem
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.getOrAwaitValueTest
 import com.ryokenlabs.repository.FakeCurrencyRepository
@@ -27,12 +28,16 @@ class CurrencyConversionViewModelTest {
 
     private lateinit var viewModel: CurrencyConversionViewModel
     private var newRates: Resource<Rates>? = null
+    private var newCurrencies: Resource<Currencies>? = null
     @Before
     fun setup() {
         viewModel = CurrencyConversionViewModel(FakeCurrencyRepository())
 
         viewModel.getRates("")
         newRates = viewModel.rates.getOrAwaitValueTest().getContentIfNotHandled()
+
+        viewModel.getCurrencies()
+        newCurrencies = viewModel.currencies.getOrAwaitValueTest().getContentIfNotHandled()
     }
 
     /************************************************************
@@ -41,7 +46,7 @@ class CurrencyConversionViewModelTest {
      *
      *************************************************************/
 
-    @Test()
+    @Test
     fun `test fake getCurrencies() request, returns success`() {
         viewModel.getCurrencies()
         val value = viewModel.currencies.getOrAwaitValueTest()
@@ -70,11 +75,12 @@ class CurrencyConversionViewModelTest {
         assertThat(value.getContentIfNotHandled()?.data).isNull()
     }
 
+
     @Test
-    fun `test fake updateCachedRates() request, returns a cached element after network response`() {
-        viewModel.updateCachedRates(newRates!!)
-        val value = viewModel.upToDateRates.getOrAwaitValueTest()
-        assertThat(value).isInstanceOf(RatesItem::class.java)
+    fun `test fake updateCachedCurrencies() request, returns a cached element after network response`() {
+        viewModel.updateCachedCurrencies(newCurrencies!!)
+        val value = viewModel.upToDateCurrencies.getOrAwaitValueTest()
+        assertThat(value).isInstanceOf(CurrenciesItem::class.java)
     }
 
     @Test
@@ -97,6 +103,13 @@ class CurrencyConversionViewModelTest {
         viewModel.getRates("")
         val value = viewModel.rates.getOrAwaitValueTest()
         assertThat(value.getContentIfNotHandled()?.data).isNull()
+    }
+
+    @Test
+    fun `test fake updateCachedRates() request, returns a cached element after network response`() {
+        viewModel.updateCachedRates(newRates!!)
+        val value = viewModel.upToDateRates.getOrAwaitValueTest()
+        assertThat(value).isInstanceOf(RatesItem::class.java)
     }
 
 

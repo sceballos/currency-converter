@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
-import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.repository.CurrencyRepository
 import com.ryokenlabs.util.Event
 import com.ryokenlabs.util.Resource
@@ -25,12 +24,19 @@ class CurrencyConversionViewModel @Inject constructor(
     val rates : LiveData<Event<Resource<Rates>>> = _rates
 
     val upToDateRates = currencyRepository.getCacheCurrenciesRates()
+    val upToDateCurrencies = currencyRepository.getCacheCurrencies()
 
     fun getCurrencies() {
         _currencies.value = Event(Resource.loading(null))
         viewModelScope.launch {
             val response = currencyRepository.getCurrencies()
             _currencies.value = Event(response)
+        }
+    }
+
+    fun updateCachedCurrencies(newCurrencies : Resource<Currencies>) {
+        viewModelScope.launch {
+            currencyRepository.insertCacheCurrencies(newCurrencies)
         }
     }
 
