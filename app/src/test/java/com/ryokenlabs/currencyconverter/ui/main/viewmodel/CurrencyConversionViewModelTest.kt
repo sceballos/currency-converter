@@ -15,7 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class CurrencyConversionViewModelTest {
-    private val conversionTolerance = 0.9999999
+    private val conversionTolerance = 0.99
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -117,12 +117,21 @@ class CurrencyConversionViewModelTest {
     }
 
     @Test
+    fun `test USD to JYN conversion`() {
+        val amount = 5605.00
+        val usd = 1.0
+        val yen = 109.997044
+        val result = viewModel.convertCurrency(amount, usd, yen)
+        assertThat(result).isWithin(conversionTolerance).of(616533.43)
+    }
+
+    @Test
     fun `test bigger amount floating point USD amount to JYN conversion`() {
         val amount = 50.45
         val usd = 1.0
         val yen = 109.997044
         val result = viewModel.convertCurrency(amount, usd, yen)
-        assertThat(result).isWithin(conversionTolerance).of(5549.3508698)
+        assertThat(result).isWithin(conversionTolerance).of(5549.35)
     }
 
     @Test
