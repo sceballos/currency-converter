@@ -2,6 +2,7 @@ package com.ryokenlabs.currencyconverter.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.ryokenlabs.currencyconverter.data.local.RatesItemsDBConstants.SINGLE_RATES_ID
 
 @Dao
 interface RatesDao {
@@ -11,6 +12,6 @@ interface RatesDao {
     @Delete
     suspend fun deleteRatesItem(ratesItem: RatesItem)
 
-    @Query("SELECT * FROM rates_items")
-    fun observeAllRatesItems() : LiveData<List<RatesItem>>
+    @Query("SELECT * FROM rates_items where id = :id")
+    fun observeAllRatesItems(id: Int = SINGLE_RATES_ID) : LiveData<RatesItem>
 }

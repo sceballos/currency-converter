@@ -1,11 +1,16 @@
 package com.ryokenlabs.currencyconverter.repository
 
+import androidx.lifecycle.LiveData
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
+import com.ryokenlabs.currencyconverter.data.local.RatesItem
 import com.ryokenlabs.util.Resource
 
 interface CurrencyRepository {
-    suspend fun getCurrencyList() : Resource<Currencies>
-    suspend fun getCurrenciesRate(currenciesQuery : String) : Resource<Rates>
-
+    suspend fun getCurrencies() : Resource<Currencies>
+    suspend fun getCurrenciesRates(currenciesQuery : String) : Resource<Rates>
+    suspend fun insertCacheCurrencyRates(networkRates : Resource<Rates>)
+    suspend fun deleteCacheCurrencyRates(ratesItem: RatesItem)
+    suspend fun getCacheCurrenciesRates() : LiveData<RatesItem>
+    suspend fun setCurrencies(newCurrencies: Resource<Currencies>)
 }
