@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
+import com.ryokenlabs.currencyconverter.data.local.currencies.CurrenciesDBConstants.SINGLE_CURRENCIES_ID
 import com.ryokenlabs.currencyconverter.data.local.currencies.CurrenciesDao
+import com.ryokenlabs.currencyconverter.data.local.currencies.CurrenciesItem
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesDao
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
@@ -34,6 +36,26 @@ class DefaultCurrencyRepository @Inject constructor(
         }
     }
 
+    override suspend fun insertCacheCurrencyRates(networkRates: Resource<Rates>) {
+        if (networkRates.data != null) {
+            networkRates.data.apply {
+                ratesDao.insertRatesItem(
+                    RatesItem(this.success, this.terms, this.privacy, this.timestamp, this.source,
+                        this.quotes, id = SINGLE_RATES_ID)
+                )
+            }
+        }
+    }
+
+    override suspend fun deleteCacheCurrencyRates(ratesItem: RatesItem) {
+        ratesDao.deleteRatesItem(ratesItem)
+    }
+
+    override fun getCacheCurrenciesRates(): LiveData<RatesItem> {
+        return ratesDao.observeRatesItem(id = SINGLE_RATES_ID)
+    }
+
+
     override suspend fun getCurrencies(): Resource<Currencies> {
         return try {
             val response = currencyAPI.requestCurrencyList("")
@@ -51,35 +73,23 @@ class DefaultCurrencyRepository @Inject constructor(
         }
     }
 
-    override suspend fun insertCacheCurrencyRates(networkRates: Resource<Rates>) {
-        if (networkRates.data != null) {
-            Log.e("TAG", "insertCacheCurrencyRates: ${networkRates.data.quotes}", )
-
-            networkRates.data.apply {
-                Log.e("TAG", "insertCacheCurrencyRates: ${this}", )
-
-                ratesDao.insertRatesItem(
-                    RatesItem(this.success, this.terms, this.privacy, this.timestamp, this.source,
-                    this.quotes, id = SINGLE_RATES_ID)
+    override suspend fun insertCacheCurrencies(newCurrencies: Resource<Currencies>) {
+        if (newCurrencies.data != null) {
+            newCurrencies.data.apply {
+                currenciesDao.insertCurrenciesItem(
+                    CurrenciesItem(this.success, this.terms, this.privacy,
+                        this.currencies, SINGLE_CURRENCIES_ID)
                 )
             }
-
-
         }
     }
 
-    override suspend fun deleteCacheCurrencyRates(ratesItem: RatesItem) {
-        ratesDao.deleteRatesItem(ratesItem)
+    override suspend fun deleteCacheCurrencies(currenciesItem: CurrenciesItem) {
+        currenciesDao.deleteCurrenciesItem(currenciesItem)
     }
 
-    override fun getCacheCurrenciesRates(): LiveData<RatesItem> {
-        return ratesDao.observeRatesItem(id = SINGLE_RATES_ID)
+    override fun getCacheCurrencies(): LiveData<CurrenciesItem> {
+        return currenciesDao.observeRatesItem()
     }
-
-    override suspend fun setCurrencies(newCurrencies: Resource<Currencies>) {
-
-    }
-
-
 
 }
