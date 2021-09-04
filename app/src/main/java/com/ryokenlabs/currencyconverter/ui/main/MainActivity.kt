@@ -23,44 +23,61 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+        subscribeObservers()
+    }
 
-        viewModel.upToDateRates.observe(this, {
-
-            Log.e("TAG", "update recycler view", )
-
+    private fun subscribeObservers() {
+        viewModel.upToDateCurrencies.observe(this, { updatedValue ->
+            Log.e("upToDateCurrencies", "${updatedValue}")
+            if (updatedValue == null) {
+                Log.e("upToDateCurrencies", "requesting currencies")
+                viewModel.currenciesCacheWasNull = true
+                viewModel.getCurrencies()
+            } else {
+                Log.e("upToDateCurrencies", "Building Currencies dropdown & registering rates handling")
+                viewModel.getRates("")
+            }
         })
+
+        viewModel.upToDateRates.observe(this, { updatedRates ->
+                Log.e("upToDateRates", "${updatedRates}")
+                if (updatedRates == null) {
+                    Log.e("upToDateRates", "no cache of rates yet, waiting for currencies first")
+                } else {
+                    Log.e("upToDateRates", "Checking if time of this rates is older than 30 minutes")
+                    Log.e("upToDateRates", "Building Change Rates Recyclerview")
+                }
+        })
+
 
         viewModel.currencies.observe(this, { event ->
             when (event.getContentIfNotHandled()?.status) {
                 Status.SUCCESS -> {
-                    Log.e("TAG", "onCreate: SUCCESS", )
+                    Log.e("currencies", "onCreate: SUCCESS :::: ${event.peekContent()}")
+                    viewModel.updateCachedCurrencies(event.peekContent())
                 }
                 Status.ERROR -> {
-                    Log.e("TAG", "onCreate: ERROR", )
+                    Log.e("currencies", "onCreate: ERROR")
                 }
                 Status.LOADING -> {
-                    Log.e("TAG", "onCreate: LOADING", )
+                    Log.e("currencies", "onCreate: LOADING")
                 }
             }
         })
-
 
         viewModel.rates.observe(this, { event ->
             when (event.getContentIfNotHandled()?.status) {
                 Status.SUCCESS -> {
-                    Log.e("TAG", "onCreate:rates SUCCESS ${event.peekContent()}", )
+                    Log.e("TAG", "onCreate:rates SUCCESS :::: ${event.peekContent()}")
                     viewModel.updateCachedRates(event.peekContent())
                 }
                 Status.ERROR -> {
-                    Log.e("TAG", "onCreate:rates ERROR", )
+                    Log.e("TAG", "onCreate:rates ERROR")
                 }
                 Status.LOADING -> {
-                    Log.e("TAG", "onCreate:rates LOADING", )
+                    Log.e("TAG", "onCreate:rates LOADING")
                 }
             }
         })
-
-        viewModel.getRates("")
-
     }
 }

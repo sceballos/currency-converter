@@ -12,6 +12,7 @@ import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.data.local.rates.RatesItemsDBConstants.SINGLE_RATES_ID
 import com.ryokenlabs.currencyconverter.model.api.CurrencyInterface
 import com.ryokenlabs.util.Resource
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class DefaultCurrencyRepository @Inject constructor(
@@ -19,7 +20,8 @@ class DefaultCurrencyRepository @Inject constructor(
     private val ratesDao : RatesDao,
     private val currencyAPI: CurrencyInterface
 ) : CurrencyRepository{
-    override suspend fun getCurrenciesRates(currenciesQuery: String): Resource<Rates> {
+    override suspend fun getCurrenciesRates(currenciesQuery: String, delayTime : Long): Resource<Rates> {
+        delay(delayTime) //since free api has limited rates
         return try {
             val response = currencyAPI.requestRates(currenciesQuery)
 
@@ -37,7 +39,7 @@ class DefaultCurrencyRepository @Inject constructor(
     }
 
     override suspend fun insertCacheCurrencyRates(networkRates: Resource<Rates>) {
-        if (networkRates.data != null) {
+        if (networkRates.data != null && networkRates.data.success) {
             networkRates.data.apply {
                 ratesDao.insertRatesItem(
                     RatesItem(this.success, this.terms, this.privacy, this.timestamp, this.source,
@@ -74,7 +76,7 @@ class DefaultCurrencyRepository @Inject constructor(
     }
 
     override suspend fun insertCacheCurrencies(newCurrencies: Resource<Currencies>) {
-        if (newCurrencies.data != null) {
+        if (newCurrencies.data != null && newCurrencies.data.success) {
             newCurrencies.data.apply {
                 currenciesDao.insertCurrenciesItem(
                     CurrenciesItem(this.success, this.terms, this.privacy,

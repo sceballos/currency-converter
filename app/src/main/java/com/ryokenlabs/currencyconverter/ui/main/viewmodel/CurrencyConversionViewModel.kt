@@ -18,13 +18,15 @@ class CurrencyConversionViewModel @Inject constructor(
     val TAG = "CurrencyCViewModel"
 
     private val _currencies = MutableLiveData<Event<Resource<Currencies>>>()
-    val currencies : LiveData<Event<Resource<Currencies>>> = _currencies
+    val currencies: LiveData<Event<Resource<Currencies>>> = _currencies
 
     private val _rates = MutableLiveData<Event<Resource<Rates>>>()
-    val rates : LiveData<Event<Resource<Rates>>> = _rates
+    val rates: LiveData<Event<Resource<Rates>>> = _rates
 
     val upToDateRates = currencyRepository.getCacheCurrenciesRates()
     val upToDateCurrencies = currencyRepository.getCacheCurrencies()
+
+    var currenciesCacheWasNull = false
 
     fun getCurrencies() {
         _currencies.value = Event(Resource.loading(null))
@@ -34,34 +36,43 @@ class CurrencyConversionViewModel @Inject constructor(
         }
     }
 
-    fun updateCachedCurrencies(newCurrencies : Resource<Currencies>) {
+    fun updateCachedCurrencies(newCurrencies: Resource<Currencies>) {
         viewModelScope.launch {
             currencyRepository.insertCacheCurrencies(newCurrencies)
         }
     }
 
-    fun getRates(query : String) {
+    fun getRates(query: String) {
         _rates.value = Event(Resource.loading(null))
+
         viewModelScope.launch {
-            val response = currencyRepository.getCurrenciesRates(query)
+
+            var response: Resource<Rates>? = null
+            if (!currenciesCacheWasNull) {
+                response = currencyRepository.getCurrenciesRates(query, 0)
+            } else {
+                response = currencyRepository.getCurrenciesRates(query)
+            }
             _rates.value = Event(response)
         }
+
     }
 
-    fun updateCachedRates(newRates : Resource<Rates>) {
-        viewModelScope.launch {
-            currencyRepository.insertCacheCurrencyRates(newRates)
-        }
-    }
 
-    fun convertCurrency(amount : Double, from : Double, to : Double) : Double {
-        if (isNegative(amount) || isNegative(from) || isNegative(to)) {
-            return -1.0
-        }
-        return (to/from) * amount
+fun updateCachedRates(newRates: Resource<Rates>) {
+    viewModelScope.launch {
+        currencyRepository.insertCacheCurrencyRates(newRates)
     }
+}
 
-    private fun isNegative(value : Double) : Boolean {
-        return value < 0
+fun convertCurrency(amount: Double, from: Double, to: Double): Double {
+    if (isNegative(amount) || isNegative(from) || isNegative(to)) {
+        return -1.0
     }
+    return (to / from) * amount
+}
+
+private fun isNegative(value: Double): Boolean {
+    return value < 0
+}
 }

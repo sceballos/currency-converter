@@ -8,7 +8,7 @@ import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.util.Resource
 
 interface CurrencyRepository {
-    suspend fun getCurrenciesRates(currenciesQuery : String) : Resource<Rates>
+    suspend fun getCurrenciesRates(currenciesQuery : String, delayTime : Long = 2000) : Resource<Rates>
     suspend fun insertCacheCurrencyRates(networkRates : Resource<Rates>)
     suspend fun deleteCacheCurrencyRates(ratesItem: RatesItem)
     fun getCacheCurrenciesRates() : LiveData<RatesItem>
