@@ -15,20 +15,21 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text="@string/default_currency"
-            app:layout_constraintBottom_toBottomOf="@+id/editTextNumberDecimal"
+            app:layout_constraintBottom_toBottomOf="@+id/amount_to_convert_et"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editTextNumberDecimal"
-            app:layout_constraintTop_toTopOf="@+id/editTextNumberDecimal" />
+            app:layout_constraintStart_toEndOf="@+id/amount_to_convert_et"
+            app:layout_constraintTop_toTopOf="@+id/amount_to_convert_et" />
 
         <EditText
-            android:id="@+id/editTextNumberDecimal"
+            android:id="@+id/amount_to_convert_et"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:ems="10"
-            android:hint="value"
+            android:hint="Amount"
             android:inputType="numberDecimal"
+            android:text="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck" />
@@ -43,6 +44,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNumberDecimal" />
+            app:layout_constraintTop_toBottomOf="@+id/amount_to_convert_et" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

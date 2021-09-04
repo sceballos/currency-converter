@@ -18,6 +18,9 @@ class CurrencyConversionViewModel @Inject constructor(
     private val _selectedCurrency = MutableLiveData<String>()
     val selectedCurrency: LiveData<String> = _selectedCurrency
 
+    private val _selectedRate = MutableLiveData<Double>()
+    val selectedRate: LiveData<Double> = _selectedRate
+
     private val _currencies = MutableLiveData<Event<Resource<Currencies>>>()
     val currencies: LiveData<Event<Resource<Currencies>>> = _currencies
 
@@ -28,6 +31,10 @@ class CurrencyConversionViewModel @Inject constructor(
     val upToDateCurrencies = currencyRepository.getCacheCurrencies()
 
     var currenciesCacheWasNull = false
+
+    init {
+        _selectedRate.value = 1.0 //default USD
+    }
 
     fun getCurrencies() {
         _currencies.value = Event(Resource.loading(null))
@@ -67,6 +74,12 @@ class CurrencyConversionViewModel @Inject constructor(
 
     fun setCurrency(currencyCode : String) {
         _selectedCurrency.value = currencyCode
+        getRateForCurrency(currencyCode)
+    }
+
+    fun getRateForCurrency(currencyCode : String) {
+        val rate = upToDateRates.value?.quotes?.get("USD${currencyCode}")
+        _selectedRate.value = rate!!
     }
 
     fun convertCurrency(amount: Double, from: Double, to: Double): Double {

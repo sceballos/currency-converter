@@ -13,6 +13,9 @@ class RatesAdapter(
     private val context: Context?,
     val clickListener: (String) -> Unit
 ) : RecyclerView.Adapter<RatesAdapter.RatesViewHolder>() {
+    var conversionRate = 1.0
+    var conversionAmount = 1.0
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -26,8 +29,8 @@ class RatesAdapter(
 
     override fun onBindViewHolder(holder: RatesViewHolder, position: Int) {
         val rate = data[position]
-        holder.code.text = rate.first
-        holder.name.text = rate.second.toString()
+        holder.code.text = rate.first.replaceFirst("USD", "")
+        holder.name.text = ((rate.second / conversionRate) * conversionAmount).toString()
         holder.itemView.setOnClickListener { clickListener(rate.first) }
     }
 

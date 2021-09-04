@@ -3,6 +3,8 @@ package com.ryokenlabs.currencyconverter.ui.main
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -16,6 +18,8 @@ import com.ryokenlabs.currencyconverter.ui.main.adapters.RatesAdapter
 import com.ryokenlabs.currencyconverter.ui.main.viewmodel.CurrencyConversionViewModel
 import com.ryokenlabs.util.Status
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.concurrent.schedule
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: CurrencyConversionViewModel by viewModels()
     private lateinit var binding : ActivityMainBinding
     private lateinit var selectCurrencyDialog: Dialog
+    private lateinit var ratesAdapter: RatesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +35,47 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+        ratesAdapter = RatesAdapter(emptyList(), this) { }
+        setupRatesRecyclerView(ratesAdapter)
+
         setupCurrenciesDialog()
 
         subscribeObservers()
+
+        setupAmountTextViewAfterTextChanged()
+    }
+
+    private fun setupAmountTextViewAfterTextChanged() {
+        binding.amountToConvertEt.addTextChangedListener(object : TextWatcher {
+            var timer = Timer()
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                timer.cancel()
+                val sleep = when (s?.length) {
+                    1 -> 1000L
+                    2, 3 -> 700L
+                    4, 5 -> 500L
+                    else -> 300L
+                }
+                timer = Timer()
+                timer.schedule(sleep) {
+                    if (s.isNullOrEmpty()) {
+
+                    } else {
+                        Log.e("TAG", "afterTextChanged2: ${s}")
+                        ratesAdapter.conversionAmount = s.toString().toDouble()
+
+                        this@MainActivity.runOnUiThread(Runnable {
+                            ratesAdapter.notifyDataSetChanged()
+                        })
+                    }
+                }
+            }
+        })
     }
 
     private fun setupRatesRecyclerView(adapter : RatesAdapter) {
@@ -75,15 +118,17 @@ class MainActivity : AppCompatActivity() {
         selectCurrencyDialog.hide()
     }
 
-    private fun doSomethingWithRatePlaceholder(currencyCode : String) {
-
-    }
-
+    private fun doSomethingWithRatePlaceholder(currencyCode : String) {}
 
     private fun subscribeObservers() {
 
         viewModel.selectedCurrency.observe(this, { updatedValue ->
             binding.changeCurrencyBtn.text = updatedValue
+        })
+
+        viewModel.selectedRate.observe(this, { updatedValue ->
+            ratesAdapter.conversionRate = updatedValue
+            ratesAdapter.notifyDataSetChanged()
         })
 
         viewModel.upToDateCurrencies.observe(this, { updatedValue ->
@@ -106,14 +151,13 @@ class MainActivity : AppCompatActivity() {
                     Log.e("upToDateRates", "Checking if time of this rates is older than 30 minutes")
                     Log.e("upToDateRates", "Building Change Rates Recyclerview")
 
-                    //build adapter here
                     val entries: List<Pair<String, Double>> =
-                        updatedRates.quotes!!.toList()
-                    val adapter = RatesAdapter(entries, this) {
+                        updatedRates.quotes!!.toList() //todo : use a display list instead, do not touch reference
+
+                    ratesAdapter = RatesAdapter(entries, this) {
                         doSomethingWithRatePlaceholder(it)
                     }
-                    
-                    setupRatesRecyclerView(adapter)
+                    setupRatesRecyclerView(ratesAdapter)
                 }
         })
 
