@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ryokenlabs.currencyconverter.R
 import com.ryokenlabs.currencyconverter.databinding.ActivityMainBinding
 import com.ryokenlabs.currencyconverter.ui.main.adapters.CurrenciesAdapter
+import com.ryokenlabs.currencyconverter.ui.main.adapters.RatesAdapter
 import com.ryokenlabs.currencyconverter.ui.main.viewmodel.CurrencyConversionViewModel
 import com.ryokenlabs.util.Status
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +30,19 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        binding.button.setOnClickListener {
+        setupCurrenciesDialog()
+
+        subscribeObservers()
+    }
+
+    private fun setupRatesRecyclerView(adapter : RatesAdapter) {
+        val ratesRecyclerView = binding.ratesRv
+        ratesRecyclerView.adapter = adapter
+        ratesRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun setupCurrenciesDialog() {
+        binding.changeCurrencyBtn.setOnClickListener {
 
             if (viewModel.upToDateCurrencies.value == null) {
                 return@setOnClickListener
@@ -38,30 +51,41 @@ class MainActivity : AppCompatActivity() {
             selectCurrencyDialog = Dialog(this)
             selectCurrencyDialog.setContentView(R.layout.currency_select_dialog)
 
-            val entries: List<Pair<String, String>> = viewModel.upToDateCurrencies.value!!.currencies.toList() //this is expensive, look a better way
+            val entries: List<Pair<String, String>> =
+                viewModel.upToDateCurrencies.value!!.currencies.toList()
 
             val currenciesAdapter = CurrenciesAdapter(
                 entries,
-                this) { item ->
+                this
+            ) { item ->
                 setUserCurrency(item)
             }
 
-            val currencyRecyclerView : RecyclerView = selectCurrencyDialog.findViewById(R.id.currencies_rv)
+            val currencyRecyclerView: RecyclerView =
+                selectCurrencyDialog.findViewById(R.id.currencies_rv)
             currencyRecyclerView.adapter = currenciesAdapter
             currencyRecyclerView.layoutManager = LinearLayoutManager(this)
 
             selectCurrencyDialog.show()
         }
-
-        subscribeObservers()
     }
 
     private fun setUserCurrency(currencyCode : String) {
-        //update viewmodel
-        Toast.makeText(this, "${currencyCode}", Toast.LENGTH_SHORT).show()
+        viewModel.setCurrency(currencyCode)
+        selectCurrencyDialog.hide()
     }
 
+    private fun doSomethingWithRatePlaceholder(currencyCode : String) {
+
+    }
+
+
     private fun subscribeObservers() {
+
+        viewModel.selectedCurrency.observe(this, { updatedValue ->
+            binding.changeCurrencyBtn.text = updatedValue
+        })
+
         viewModel.upToDateCurrencies.observe(this, { updatedValue ->
             Log.e("upToDateCurrencies", "${updatedValue}")
             if (updatedValue == null) {
@@ -81,6 +105,15 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Log.e("upToDateRates", "Checking if time of this rates is older than 30 minutes")
                     Log.e("upToDateRates", "Building Change Rates Recyclerview")
+
+                    //build adapter here
+                    val entries: List<Pair<String, Double>> =
+                        updatedRates.quotes!!.toList()
+                    val adapter = RatesAdapter(entries, this) {
+                        doSomethingWithRatePlaceholder(it)
+                    }
+                    
+                    setupRatesRecyclerView(adapter)
                 }
         })
 

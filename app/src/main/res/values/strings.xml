@@ -12,4 +12,6 @@
     <string name="currency_code_placeholder">USD</string>
     <string name="currency_name_placeholder">American Dollar</string>
     <string name="select_currency">Select currency</string>
+    <string name="default_currency">USD</string>
+    <string name="currency_rate_placeholder">110.48</string>
 </resources>

@@ -15,7 +15,8 @@ import javax.inject.Inject
 class CurrencyConversionViewModel @Inject constructor(
     private val currencyRepository: CurrencyRepository
 ) : ViewModel() {
-    val TAG = "CurrencyCViewModel"
+    private val _selectedCurrency = MutableLiveData<String>()
+    val selectedCurrency: LiveData<String> = _selectedCurrency
 
     private val _currencies = MutableLiveData<Event<Resource<Currencies>>>()
     val currencies: LiveData<Event<Resource<Currencies>>> = _currencies
@@ -58,21 +59,24 @@ class CurrencyConversionViewModel @Inject constructor(
 
     }
 
-
-fun updateCachedRates(newRates: Resource<Rates>) {
-    viewModelScope.launch {
-        currencyRepository.insertCacheCurrencyRates(newRates)
+    fun updateCachedRates(newRates: Resource<Rates>) {
+        viewModelScope.launch {
+            currencyRepository.insertCacheCurrencyRates(newRates)
+        }
     }
-}
 
-fun convertCurrency(amount: Double, from: Double, to: Double): Double {
-    if (isNegative(amount) || isNegative(from) || isNegative(to)) {
-        return -1.0
+    fun setCurrency(currencyCode : String) {
+        _selectedCurrency.value = currencyCode
     }
-    return (to / from) * amount
-}
 
-private fun isNegative(value: Double): Boolean {
-    return value < 0
-}
+    fun convertCurrency(amount: Double, from: Double, to: Double): Double {
+        if (isNegative(amount) || isNegative(from) || isNegative(to)) {
+            return -1.0
+        }
+        return (to / from) * amount
+    }
+
+    private fun isNegative(value: Double): Boolean {
+        return value < 0
+    }
 }

@@ -16,7 +16,7 @@ class CurrenciesAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): CurrenciesAdapter.CurrenciesViewHolder {
+    ): CurrenciesViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
             R.layout.currency_item_view,
             parent, false
@@ -24,7 +24,7 @@ class CurrenciesAdapter(
         return CurrenciesViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: CurrenciesAdapter.CurrenciesViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CurrenciesViewHolder, position: Int) {
         val currency = data[position]
         holder.code.text = currency.first
         holder.name.text = currency.second
@@ -39,6 +39,4 @@ class CurrenciesAdapter(
         val code : TextView = itemView.findViewById(R.id.currency_code_tv)
         val name : TextView = itemView.findViewById(R.id.currency_name_tv)
     }
-
-
 }
