@@ -2,9 +2,9 @@
 
 > A simple Android currency conversion app using MVVM architecture
 
-## Description 
+## Description
 
-- This app allows it's users to convert amounts from any currency to any other. For example : convert 45 USD to all of the other currencies (CAD, JPY, AUD, etc). The results of the conversion will be displayed in a vertical RecyclerView showing the name of the currency and the value of the conversion.
+- This app allows it's users to convert amounts from any currency to any other. For example : convert 45 USD to all of the other currencies (CAD, JPY, AUD, etc). The results of the conversion will be displayed in a vertical RecyclerView showing the name of the currency and the value of the conversion. Refer to `app.apk` file for quick testing in device
 
 ## Screenshots
 
