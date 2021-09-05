@@ -138,41 +138,41 @@ class MainActivity : AppCompatActivity() {
                 viewModel.currenciesCacheWasNull = true
                 viewModel.getCurrencies()
             } else {
-                Log.e("upToDateCurrencies", "Building Currencies dropdown & registering rates handling")
-                viewModel.getRates("")
-            }
-        })
+                Log.e("upToDateCurrencies", "Building Currencies UI & getting Rates")
+                viewModel.upToDateRates.observe(this, { updatedRates ->
+                    Log.e("upToDateRates: value observed", "${updatedRates}")
+                    if (updatedRates == null) {
+                        Log.e("upToDateRates", "getting network rates now")
+                        viewModel.getRates()
+                    } else {
+                        Log.e("upToDateRates", "Checking expiration before setting up RecyclerView")
+                        if (!viewModel.updateIfExpired()) {
+                            Log.e("upToDateRates", "Rates are not expired, using cached ones")
+                            val entries: List<Pair<String, Double>> =
+                                updatedRates.quotes!!.toList()
 
-        viewModel.upToDateRates.observe(this, { updatedRates ->
-                Log.e("upToDateRates", "${updatedRates}")
-                if (updatedRates == null) {
-                    Log.e("upToDateRates", "no cache of rates yet, waiting for currencies first")
-                } else {
-                    Log.e("upToDateRates", "Checking if time of this rates is older than 30 minutes")
-                    Log.e("upToDateRates", "Building Change Rates Recyclerview")
-
-                    val entries: List<Pair<String, Double>> =
-                        updatedRates.quotes!!.toList() //todo : use a display list instead, do not touch reference
-
-                    ratesAdapter = RatesAdapter(entries, this) {
-                        doSomethingWithRatePlaceholder(it)
+                            ratesAdapter = RatesAdapter(entries, this) {
+                                doSomethingWithRatePlaceholder(it)
+                            }
+                            setupRatesRecyclerView(ratesAdapter)
+                        }
                     }
-                    setupRatesRecyclerView(ratesAdapter)
-                }
+                })
+            }
         })
 
 
         viewModel.currencies.observe(this, { event ->
             when (event.getContentIfNotHandled()?.status) {
                 Status.SUCCESS -> {
-                    Log.e("currencies", "onCreate: SUCCESS :::: ${event.peekContent()}")
-                    viewModel.updateCachedCurrencies(event.peekContent())
+                    Log.e("CURRENCIES", "onCreate: SUCCESS")
+                    //viewModel.updateCachedCurrencies(event.peekContent())
                 }
                 Status.ERROR -> {
-                    Log.e("currencies", "onCreate: ERROR")
+                    Log.e("CURRENCIES", "onCreate: ERROR")
                 }
                 Status.LOADING -> {
-                    Log.e("currencies", "onCreate: LOADING")
+                    Log.e("CURRENCIES", "onCreate: LOADING")
                 }
             }
         })
@@ -180,14 +180,14 @@ class MainActivity : AppCompatActivity() {
         viewModel.rates.observe(this, { event ->
             when (event.getContentIfNotHandled()?.status) {
                 Status.SUCCESS -> {
-                    Log.e("TAG", "onCreate:rates SUCCESS :::: ${event.peekContent()}")
-                    viewModel.updateCachedRates(event.peekContent())
+                    Log.e("RATES", "onCreate: SUCCESS")
+                    //viewModel.updateCachedRates(event.peekContent())
                 }
                 Status.ERROR -> {
-                    Log.e("TAG", "onCreate:rates ERROR")
+                    Log.e("RATES", "onCreate:rates ERROR")
                 }
                 Status.LOADING -> {
-                    Log.e("TAG", "onCreate:rates LOADING")
+                    Log.e("RATES", "onCreate:rates LOADING")
                 }
             }
         })

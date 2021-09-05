@@ -1,14 +1,21 @@
 package com.ryokenlabs.currencyconverter.ui.main.viewmodel
 
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.*
 import com.ryokenlabs.currencyconverter.data.api.Currencies
 import com.ryokenlabs.currencyconverter.data.api.Rates
+import com.ryokenlabs.currencyconverter.data.local.rates.RatesItem
 import com.ryokenlabs.currencyconverter.repository.CurrencyRepository
 import com.ryokenlabs.util.Event
 import com.ryokenlabs.util.Resource
+import com.ryokenlabs.util.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,8 +34,8 @@ class CurrencyConversionViewModel @Inject constructor(
     private val _rates = MutableLiveData<Event<Resource<Rates>>>()
     val rates: LiveData<Event<Resource<Rates>>> = _rates
 
-    val upToDateRates = currencyRepository.getCacheCurrenciesRates()
     val upToDateCurrencies = currencyRepository.getCacheCurrencies()
+    val upToDateRates = currencyRepository.getCacheCurrenciesRates()
 
     var currenciesCacheWasNull = false
 
@@ -41,6 +48,12 @@ class CurrencyConversionViewModel @Inject constructor(
         viewModelScope.launch {
             val response = currencyRepository.getCurrencies()
             _currencies.value = Event(response)
+
+            when(response.status) {
+                Status.SUCCESS -> {
+                    updateCachedCurrencies(response)
+                }
+            }
         }
     }
 
@@ -50,20 +63,49 @@ class CurrencyConversionViewModel @Inject constructor(
         }
     }
 
-    fun getRates(query: String) {
+    fun getRates() {
+        requestNetworkRates()
+    }
+
+    fun updateIfExpired() : Boolean {
+        return if (areRatesExpired()) {
+            requestNetworkRates()
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun areRatesExpired() : Boolean {
+        val currentTimestamp = System.currentTimeMillis() / 1000
+        val cachedRatesTimestamp = upToDateRates.value?.timestamp
+        val difference = (currentTimestamp - cachedRatesTimestamp!!)
+
+        Log.e(
+            "TAG",
+            "getRates: current timestamp=${currentTimestamp}/ cached=${cachedRatesTimestamp}:::difference is ${difference} "
+        )
+        return difference > 1800
+    }
+
+    private fun requestNetworkRates() {
         _rates.value = Event(Resource.loading(null))
-
         viewModelScope.launch {
-
             var response: Resource<Rates>? = null
             if (!currenciesCacheWasNull) {
-                response = currencyRepository.getCurrenciesRates(query, 0)
+                response = currencyRepository.getCurrenciesRates("", 0)
             } else {
-                response = currencyRepository.getCurrenciesRates(query)
+                response = currencyRepository.getCurrenciesRates("")
             }
             _rates.value = Event(response)
-        }
+            when(response.status) {
+                Status.SUCCESS -> {
+                    Log.e("TAG", "requestNetworkRates: updating db rates ")
 
+                    updateCachedRates(response)
+                }
+            }
+        }
     }
 
     fun updateCachedRates(newRates: Resource<Rates>) {
@@ -72,12 +114,12 @@ class CurrencyConversionViewModel @Inject constructor(
         }
     }
 
-    fun setCurrency(currencyCode : String) {
+    fun setCurrency(currencyCode: String) {
         _selectedCurrency.value = currencyCode
         getRateForCurrency(currencyCode)
     }
 
-    fun getRateForCurrency(currencyCode : String) {
+    fun getRateForCurrency(currencyCode: String) {
         val rate = upToDateRates.value?.quotes?.get("USD${currencyCode}")
         _selectedRate.value = rate!!
     }

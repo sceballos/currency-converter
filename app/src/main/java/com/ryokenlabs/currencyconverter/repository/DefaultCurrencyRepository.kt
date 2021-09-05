@@ -42,7 +42,7 @@ class DefaultCurrencyRepository @Inject constructor(
         if (networkRates.data != null && networkRates.data.success) {
             networkRates.data.apply {
                 ratesDao.insertRatesItem(
-                    RatesItem(this.success, this.terms, this.privacy, this.timestamp, this.source,
+                    RatesItem(this.success, this.terms, this.privacy, System.currentTimeMillis() / 1000, this.source,
                         this.quotes, id = SINGLE_RATES_ID)
                 )
             }
