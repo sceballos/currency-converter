@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.ryokenlabs.currencyconverter.R
 import com.ryokenlabs.currencyconverter.databinding.ActivityMainBinding
 import com.ryokenlabs.currencyconverter.ui.main.adapters.CurrenciesAdapter
@@ -66,7 +68,6 @@ class MainActivity : AppCompatActivity() {
                     if (s.isNullOrEmpty()) {
 
                     } else {
-                        Log.e("TAG", "afterTextChanged2: ${s}")
                         ratesAdapter.conversionAmount = s.toString().toDouble()
 
                         this@MainActivity.runOnUiThread(Runnable {
@@ -166,10 +167,10 @@ class MainActivity : AppCompatActivity() {
             when (event.getContentIfNotHandled()?.status) {
                 Status.SUCCESS -> {
                     Log.e("CURRENCIES", "onCreate: SUCCESS")
-                    //viewModel.updateCachedCurrencies(event.peekContent())
                 }
                 Status.ERROR -> {
                     Log.e("CURRENCIES", "onCreate: ERROR")
+                    binding.errorMsgTv.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
                     Log.e("CURRENCIES", "onCreate: LOADING")
@@ -181,13 +182,16 @@ class MainActivity : AppCompatActivity() {
             when (event.getContentIfNotHandled()?.status) {
                 Status.SUCCESS -> {
                     Log.e("RATES", "onCreate: SUCCESS")
-                    //viewModel.updateCachedRates(event.peekContent())
+                    binding.ratesPb.visibility = View.GONE
                 }
                 Status.ERROR -> {
                     Log.e("RATES", "onCreate:rates ERROR")
+                    binding.ratesPb.visibility = View.GONE
+                    Snackbar.make(binding.mainContainer, "An error occurred while getting exchange rates", 3000).show()
                 }
                 Status.LOADING -> {
                     Log.e("RATES", "onCreate:rates LOADING")
+                    binding.ratesPb.visibility = View.VISIBLE
                 }
             }
         })

@@ -101,7 +101,6 @@ class CurrencyConversionViewModel @Inject constructor(
             when(response.status) {
                 Status.SUCCESS -> {
                     Log.e("TAG", "requestNetworkRates: updating db rates ")
-
                     updateCachedRates(response)
                 }
             }
