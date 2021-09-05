@@ -116,6 +116,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUserCurrency(currencyCode : String) {
         viewModel.setCurrency(currencyCode)
+        viewModel.setRateForCurrency(currencyCode)
         selectCurrencyDialog.hide()
     }
 

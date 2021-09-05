@@ -56,7 +56,7 @@ class FakeCurrencyRepository : CurrencyRepository {
         return observableCurrencies
     }
 
-    override suspend fun getCurrenciesRates(currenciesQuery: String): Resource<Rates> {
+    override suspend fun getCurrenciesRates(currenciesQuery: String, delayTime: Long): Resource<Rates> {
         return if (returnError) {
             Resource.error("Error", null)
         } else {

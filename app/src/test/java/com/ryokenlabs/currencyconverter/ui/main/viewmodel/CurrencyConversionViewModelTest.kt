@@ -33,11 +33,11 @@ class CurrencyConversionViewModelTest {
     fun setup() {
         viewModel = CurrencyConversionViewModel(FakeCurrencyRepository())
 
-        viewModel.getRates("")
-        newRates = viewModel.rates.getOrAwaitValueTest().getContentIfNotHandled()
-
         viewModel.getCurrencies()
         newCurrencies = viewModel.currencies.getOrAwaitValueTest().getContentIfNotHandled()
+
+        viewModel.getRates()
+        newRates = viewModel.rates.getOrAwaitValueTest().getContentIfNotHandled()
     }
 
     /************************************************************
@@ -85,14 +85,14 @@ class CurrencyConversionViewModelTest {
 
     @Test
     fun `test fake getRates() request, returns a Rates object`() {
-        viewModel.getRates("")
+        viewModel.getRates()
         val value = viewModel.rates.getOrAwaitValueTest()
         assertThat(value.getContentIfNotHandled()?.data).isInstanceOf(Rates::class.java)
     }
 
     @Test
     fun `test fake getRates() request, returns not null`() {
-        viewModel.getRates("")
+        viewModel.getRates()
         val value = viewModel.rates.getOrAwaitValueTest()
         assertThat(value.getContentIfNotHandled()?.data).isNotNull()
     }
@@ -100,7 +100,7 @@ class CurrencyConversionViewModelTest {
     @Ignore("Run this test case by using setShouldReturnError(true) function inside FakeCurrencyRepository class")
     @Test
     fun `test fake getRates() request, returns null`() {
-        viewModel.getRates("")
+        viewModel.getRates()
         val value = viewModel.rates.getOrAwaitValueTest()
         assertThat(value.getContentIfNotHandled()?.data).isNull()
     }
@@ -112,6 +112,52 @@ class CurrencyConversionViewModelTest {
         assertThat(value).isInstanceOf(RatesItem::class.java)
     }
 
+    /************************************************************
+     *
+     * CACHE TIME CHECKING TEST CASE
+     *
+     *************************************************************/
+
+    @Test
+    fun `test do not request network data if cache data is not expired`() {
+        val result = viewModel.areRatesExpired(
+            (System.currentTimeMillis() / 1000) + 1000,
+            System.currentTimeMillis() / 1000)
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun `test request network data if cache data is expired`() {
+        val result = viewModel.areRatesExpired(
+            (System.currentTimeMillis() / 1000) + 1800,
+            (System.currentTimeMillis() / 1000))
+        println(result)
+        assertThat(result).isTrue()
+    }
+
+    /************************************************************
+     *
+     * USER INTERCATION UNIT TEST CASES
+     *
+     *************************************************************/
+
+    @Test
+    fun `test currency is set correctly`() {
+        viewModel.setCurrency("USD")
+
+        val result = viewModel.selectedCurrency.value
+
+        assertThat(result).isEqualTo("USD")
+    }
+
+    @Test
+    fun `test rates is set correctly`() {
+        viewModel.setRates(14123.13)
+
+        val result = viewModel.selectedRate.value
+
+        assertThat(result).isEqualTo(14123.13)
+    }
 
     /************************************************************
      *

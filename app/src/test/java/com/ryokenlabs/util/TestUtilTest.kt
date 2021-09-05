@@ -7,10 +7,15 @@ import org.junit.Test
 
 class TestUtilTest {
 
+    /***
+     *
+     * class to setup quick tests
+     *
+     * */
+
     @Test
     fun `empty currencies`() {
         val result = checkCurrency("")
         assertThat(result).isFalse()
-
     }
 }
