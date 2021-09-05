@@ -30,7 +30,7 @@ class RatesAdapter(
     override fun onBindViewHolder(holder: RatesViewHolder, position: Int) {
         val rate = data[position]
         holder.code.text = rate.first.replaceFirst("USD", "")
-        holder.name.text = ((rate.second / conversionRate) * conversionAmount).toString()
+        holder.name.text = "%.2f".format((rate.second / conversionRate) * conversionAmount)
         holder.itemView.setOnClickListener { clickListener(rate.first) }
     }
 
