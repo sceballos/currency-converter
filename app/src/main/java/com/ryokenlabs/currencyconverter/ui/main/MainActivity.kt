@@ -95,11 +95,13 @@ class MainActivity : AppCompatActivity() {
             selectCurrencyDialog = Dialog(this)
             selectCurrencyDialog.setContentView(R.layout.currency_select_dialog)
 
-            val entries: List<Pair<String, String>> =
-                viewModel.upToDateCurrencies.value!!.currencies.toList()
+            if (viewModel.currenciesList.isEmpty()) {
+                val entries = viewModel.convertCurrenciesMapToList(viewModel.upToDateCurrencies.value!!.currencies)
+                viewModel.setAvailableCurrencies(entries)
+            }
 
             val currenciesAdapter = CurrenciesAdapter(
-                entries,
+                viewModel.currenciesList,
                 this
             ) { item ->
                 setUserCurrency(item)

@@ -131,13 +131,12 @@ class CurrencyConversionViewModelTest {
         val result = viewModel.areRatesExpired(
             (System.currentTimeMillis() / 1000) + 1800,
             (System.currentTimeMillis() / 1000))
-        println(result)
         assertThat(result).isTrue()
     }
 
     /************************************************************
      *
-     * USER INTERCATION UNIT TEST CASES
+     * USER INTERACTION UNIT TEST CASES
      *
      *************************************************************/
 
@@ -157,6 +156,19 @@ class CurrencyConversionViewModelTest {
         val result = viewModel.selectedRate.value
 
         assertThat(result).isEqualTo(14123.13)
+    }
+
+    @Test
+    fun `test currencies list for dialog is set correctly`() {
+        viewModel.setAvailableCurrencies(listOf(Pair("",""), Pair("",""),Pair("","")))
+        val result = viewModel.currenciesList
+        assertThat(result.size).isEqualTo(3)
+    }
+
+    @Test
+    fun `test currencies map to list conversion returns a List`() {
+        val result = viewModel.convertCurrenciesMapToList(mapOf("" to "", "" to ""))
+        assertThat(result).isInstanceOf(List::class.java)
     }
 
     /************************************************************

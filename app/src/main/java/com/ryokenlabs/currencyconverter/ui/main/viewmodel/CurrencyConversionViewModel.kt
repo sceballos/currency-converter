@@ -27,6 +27,8 @@ class CurrencyConversionViewModel @Inject constructor(
     private val _selectedCurrency = MutableLiveData<String>()
     val selectedCurrency: LiveData<String> = _selectedCurrency
 
+    var currenciesList = listOf<Pair<String, String>>()
+
     private val _selectedRate = MutableLiveData<Double>()
     val selectedRate: LiveData<Double> = _selectedRate
 
@@ -63,6 +65,14 @@ class CurrencyConversionViewModel @Inject constructor(
         viewModelScope.launch {
             currencyRepository.insertCacheCurrencies(newCurrencies)
         }
+    }
+
+    fun convertCurrenciesMapToList(map : Map<String, String>) : List<Pair<String, String>>{
+        return map.toList()
+    }
+
+    fun setAvailableCurrencies(data : List<Pair<String, String>>) {
+        currenciesList = data
     }
 
     fun getRates() {
